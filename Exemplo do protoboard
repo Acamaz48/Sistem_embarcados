@@ -1,0 +1,68 @@
+// Definição dos pinos
+const int trigPin = 5;      // Pino TRIG do HC-SR04
+const int echoPin = 18;     // Pino ECHO do HC-SR04
+const int buzzerPin = 17;   // Pino do buzzer
+const int ledPositivo = 16; // LED positivo (acima de 80%)
+const int ledNegativo = 4;  // LED negativo (abaixo de 80%)
+const int chaveMestre = 15; // Pino da chave mestre
+
+// Variáveis
+long duracao;
+float distancia;
+float capacidadeCheia = 20.0; // Distância em cm quando o lixo está cheio
+float limite80 = capacidadeCheia * 0.8;
+
+void setup() {
+  // Inicializa comunicação serial
+  Serial.begin(115200);
+  
+  // Configura os pinos
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(ledPositivo, OUTPUT);
+  pinMode(ledNegativo, OUTPUT);
+  pinMode(chaveMestre, INPUT_PULLUP); // Usa resistência interna para evitar ruído
+}
+
+void loop() {
+  // Verifica a posição da chave mestre
+  int estadoChave = digitalRead(chaveMestre);
+
+  // Envia o pulso TRIG
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Calcula o tempo do pulso ECHO
+  duracao = pulseIn(echoPin, HIGH);
+  
+  // Calcula a distância (em cm)
+  distancia = duracao * 0.034 / 2;
+
+  Serial.print("Distância: ");
+  Serial.println(distancia);
+
+  // Condição se o lixo está acima de 80%
+  if (distancia <= limite80 && estadoChave == LOW) {
+    digitalWrite(ledPositivo, HIGH); // Acende LED positivo
+    digitalWrite(ledNegativo, LOW);
+    tone(buzzerPin, 1000); // Som alto
+  } 
+  // Condição se o lixo está abaixo de 80%
+  else if (distancia > limite80 && estadoChave == HIGH) {
+    digitalWrite(ledNegativo, HIGH); // Acende LED negativo
+    digitalWrite(ledPositivo, LOW);
+    tone(buzzerPin, 500); // Som baixo
+  } 
+  // Desliga LEDs e buzzer se a chave estiver em outra posição
+  else {
+    digitalWrite(ledPositivo, LOW);
+    digitalWrite(ledNegativo, LOW);
+    noTone(buzzerPin); // Desliga buzzer
+  }
+
+  delay(500); // Delay para estabilidade
+}
