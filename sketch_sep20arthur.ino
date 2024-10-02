@@ -1,11 +1,11 @@
 #include <ultrasonic.h>
 
 // Definição dos pinos
-#define trigPin 2       // Pino TRIG do HC-SR04
-#define echoPin 3       // Pino ECHO do HC-SR04
-#define buzzerPin 5     // Pino do buzzer
-#define ledPositivo 9   // LED positivo (distante)
-#define ledNegativo 8   // LED negativo (perto)
+#define trigPin 33       // Pino TRIG do HC-SR04
+#define echoPin 35       // Pino ECHO do HC-SR04
+#define buzzerPin 25     // Pino do buzzer
+#define ledPositivo 26   // LED positivo (distante)
+#define ledNegativo 32   // LED negativo (perto)
 #define chaveMestre 15  // Pino da chave mestre (não usado neste exemplo)
 
 // Variáveis
