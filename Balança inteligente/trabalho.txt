@@ -1,0 +1,39 @@
+# projeto_balança/
+│
+├── balanca.py                   # Arquivo principal
+├── identificacao_produto.py   # Identificação do produto via câmera
+├── leitura_peso.py            # Comunicação e leitura de peso
+├── nota_fiscal.py             # Geração da nota fiscal
+└── modelo_produtos.h5         # Modelo de IA para identificação de produtos (opcional)
+
+
+-> O arquivo principal (balanca.py) deve 
+ importar as funções dos outros módulos (identificacao_produto.py, leitura_peso.py, e nota_fiscal.py) e integrá-los.
+
+
+#leitura principal : ler os pesos da balança inteligente porém irá implementar duas funções importantes : 
+ * calibrar_sensor() : Esta função executa o processo de calibração da célula de carga conectada ao HX711. 
+ * ler_peso() :sta função lê o valor atual da célula de carga e retorna a leitura bruta do peso, 
+ para que o código principal em balanca.py aplique o offset e a escala para obter o peso real.
+
+
+ # Usar uma biblioteca HX711 do python amplamente utilizada interagindo com módulo HX711 e células carga.
+
+ # Instalar a biblioteca HX711.
+
+
+#Vou assumir que ele usa um modelo de aprendizado de máquina pré-treinado,
+ como um modelo de classificação de imagem, para reconhecer o produto.
+ vamos usar as bibliotecas Open Cv(tensorflow).
+
+
+
+
+
+#O código da nota_fiscal precisa formatar as informações do produto:
+ (nome, peso, preço, por unidade de peso,preço total).
+ A nota fiscal pode ser salva em arquivo (.txt/.pdf) para regsitros.
+ Temos duas funções : 
+ - Gerar nota_fiscal.
+ - Salvar nota_fiscal.
+ 
