@@ -1,0 +1,65 @@
+#include <HX711.h>
+
+// Define os pinos de ligação com o ESP32
+#define DT 2    // GPIO 2
+#define SCK 15  // GPIO 15
+
+HX711 balanca;
+
+// Valor inicial de escala - ajustar manualmente
+float escala_calibracao = 2280.0;  // Tente começar com este valor
+
+void setup() {
+  Serial.begin(115200);
+  delay(5000); // Tempo para estabilizar a conexão serial
+
+  // Inicializa o módulo HX711
+  balanca.begin(DT, SCK);
+  
+  // Verifica se o HX711 está pronto
+  while (!balanca.is_ready()) {
+    Serial.println("HX711 não está pronto. Verifique as conexões.");
+    delay(500);
+  }
+
+  Serial.println("HX711 pronto.");
+
+  // Definir a tara para zerar a balança
+  Serial.println("Registrando a tara...");
+  balanca.tare();  // Zera a balança para ignorar o peso residual
+  delay(2000);
+
+  Serial.println("Insira um objeto de peso conhecido na balança para calibrar.");
+  delay(5000);  // Tempo para colocar um peso de referência na balança (como o peso de 300 gramas)
+  
+  // Captura a leitura média com o peso de referência
+  long leitura_calibracao = balanca.get_units(15); // 15 leituras para maior estabilidade
+
+  // Define a escala com base no peso conhecido (ex: 300 gramas)
+  float peso_referencia = 300.0;  // Peso conhecido em gramas
+  // Ajusta a escala_calibracao baseada na leitura
+  escala_calibracao = leitura_calibracao / peso_referencia;
+  balanca.set_scale(escala_calibracao);
+
+  Serial.print("Escala ajustada com base em ");
+  Serial.print(peso_referencia);
+  Serial.print(" g: ");
+  Serial.println(escala_calibracao);
+
+  Serial.println("Calibração concluída. A balança está pronta para pesagem.");
+}
+
+void loop() {
+  // Realiza uma leitura do peso com a escala configurada
+  float peso_medido = balanca.get_units(10);  // Sem multiplicação por 1000, já está em gramas
+  
+  // Verifica e ajusta valores negativos
+  if (peso_medido < 0) peso_medido = 0;
+
+  // Exibe o peso em gramas
+  Serial.print("Peso atual na balança: ");
+  Serial.print(peso_medido, 2);  // Mostra com duas casas decimais
+  Serial.println(" g");
+
+  delay(2000); // Ajuste o delay conforme necessário
+}
